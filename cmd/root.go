@@ -11,17 +11,16 @@ import (
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
-	Use:   "constance-installer",
-	Short: "A brief description of your application",
-	Long: `A longer description that spans multiple lines and likely contains
-examples and usage of using your application. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
-	// Uncomment the following line if your bare application
-	// has an action associated with it:
-	// Run: func(cmd *cobra.Command, args []string) { },
+	Use:   "constance",
+	Short: "Cross-platform declarative package installer",
+	Long: `Constance is a cross-platform declarative package installer.
+It is a tool that allows you to install packages in a declarative way,
+so you can install the same packages in different machines with the same
+configuration file.
+	
+It works by reading a configuration file and installing the packages using the installed package manager in the system.
+	
+For more information, visit: github.com/HeitorAugustoLN/constance-installer/wiki`,
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
