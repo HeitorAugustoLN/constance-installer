@@ -89,7 +89,7 @@ type Config struct {
 	Profile string `json:"profile"`
 }
 
-func writeJSONToFile(filePath string, data interface{}) error {
+func WriteJSONToFile(filePath string, data interface{}) error {
 	file, err := os.Create(filePath)
 	if err != nil {
 		return err
@@ -180,22 +180,22 @@ func ParseJSONToFiles(packages map[string][]string) {
 	configPath := filepath.Join(constanceFolder, "config.json")
 
 	fmt.Printf("%s %s\n", styles.CyanText.Render("Writing JSON to file:"), styles.PurpleBoldText.Render(coreSysPath))
-	err := writeJSONToFile(coreSysPath, packageData)
+	err := WriteJSONToFile(coreSysPath, packageData)
 	if err != nil {
 		fmt.Println("Error writing JSON to file:", err)
 	}
 	fmt.Printf("%s %s\n", styles.CyanText.Render("Writing JSON to file:"), styles.PurpleBoldText.Render(mainPath))
-	err = writeJSONToFile(mainPath, mainFileData)
+	err = WriteJSONToFile(mainPath, mainFileData)
 	if err != nil {
 		fmt.Println("Error writing JSON to file:", err)
 	}
 	fmt.Printf("%s %s\n", styles.CyanText.Render("Writing JSON to file:"), styles.PurpleBoldText.Render(genInfoPath))
-	err = writeJSONToFile(genInfoPath, genInfo)
+	err = WriteJSONToFile(genInfoPath, genInfo)
 	if err != nil {
 		fmt.Println("Error writing JSON to file:", err)
 	}
 	fmt.Printf("%s %s\n", styles.CyanText.Render("Writing JSON to file:"), styles.PurpleBoldText.Render(configPath))
-	err = writeJSONToFile(configPath, config)
+	err = WriteJSONToFile(configPath, config)
 	if err != nil {
 		fmt.Println("Error writing JSON to file:", err)
 	}
@@ -207,4 +207,43 @@ func ReadJSONFromFile(filePath string) map[string]interface{} {
 	json.Unmarshal(byteValue, &result)
 
 	return result
+}
+
+func CopyDirectory(source, destination string) error {
+	// Read all files and subdirectories in the source directory
+	files, err := os.ReadDir(source)
+	if err != nil {
+		return err
+	}
+
+	// Create the destination directory if it doesn't exist
+	err = os.MkdirAll(destination, 0755)
+	if err != nil {
+		return err
+	}
+
+	// Copy each file and subdirectory to the destination directory
+	for _, file := range files {
+		srcPath := filepath.Join(source, file.Name())
+		dstPath := filepath.Join(destination, file.Name())
+
+		if file.IsDir() {
+			err = CopyDirectory(srcPath, dstPath)
+			if err != nil {
+				return err
+			}
+		} else {
+			data, err := os.ReadFile(srcPath)
+			if err != nil {
+				return err
+			}
+
+			err = os.WriteFile(dstPath, data, 0644)
+			if err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
 }
