@@ -85,6 +85,10 @@ type GenInfo struct {
 	Built   int `json:"built"`
 }
 
+type Config struct {
+	Profile string `json:"profile"`
+}
+
 func writeJSONToFile(filePath string, data interface{}) error {
 	file, err := os.Create(filePath)
 	if err != nil {
@@ -113,12 +117,16 @@ func ParseJSONToFiles(packages map[string][]string) {
 	}
 
 	mainFileData := PackageData{
-		Imports: &[]string{fmt.Sprintf("core_%s.json", runtime)},
+		Imports: &[]string{fmt.Sprintf("core_%s", runtime)},
 	}
 
 	genInfo := GenInfo{
 		Current: 0,
 		Built:   0,
+	}
+
+	config := Config{
+		Profile: runtime,
 	}
 
 	for packageManager, packageList := range packages {
@@ -169,6 +177,7 @@ func ParseJSONToFiles(packages map[string][]string) {
 	coreSysPath := filepath.Join(constanceFolder, fmt.Sprintf("imports/core_%s.json", runtime))
 	mainPath := filepath.Join(constanceFolder, fmt.Sprintf("profiles/%s.json", runtime))
 	genInfoPath := filepath.Join(constanceFolder, "generations/info.json")
+	configPath := filepath.Join(constanceFolder, "config.json")
 
 	fmt.Printf("%s %s\n", styles.CyanText.Render("Writing JSON to file:"), styles.PurpleBoldText.Render(coreSysPath))
 	err := writeJSONToFile(coreSysPath, packageData)
@@ -185,4 +194,17 @@ func ParseJSONToFiles(packages map[string][]string) {
 	if err != nil {
 		fmt.Println("Error writing JSON to file:", err)
 	}
+	fmt.Printf("%s %s\n", styles.CyanText.Render("Writing JSON to file:"), styles.PurpleBoldText.Render(configPath))
+	err = writeJSONToFile(configPath, config)
+	if err != nil {
+		fmt.Println("Error writing JSON to file:", err)
+	}
+}
+
+func ReadJSONFromFile(filePath string) map[string]interface{} {
+	var result map[string]interface{}
+	byteValue, _ := os.ReadFile(filePath)
+	json.Unmarshal(byteValue, &result)
+
+	return result
 }
