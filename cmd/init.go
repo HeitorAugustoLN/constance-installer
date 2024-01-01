@@ -31,8 +31,8 @@ func setup(cmd *cobra.Command, args []string) {
 		installedPackages := packages.GetInstalledPackages(packageManagers)
 		system.BootstrapConstanceFiles()
 		system.ParseJSONToFiles(installedPackages)
-		fmt.Printf("%s\n", styles.YellowText.Render("Done! Constance is now set up."))
 		packages.CreateGeneration()
+		fmt.Printf("%s\n", styles.YellowText.Render("Done! Constance is now set up."))
 	} else {
 		fmt.Println("Constance is already set up.")
 		os.Exit(1)
